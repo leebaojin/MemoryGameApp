@@ -2,6 +2,7 @@ package iss.workshop.memorygameapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,7 +14,7 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        moveToNextIntent();
         ImageAdaptor adaptor = new ImageAdaptor(this,"blankimage",20);
         GridView gridView = findViewById(R.id.imageGrid);
         if(gridView != null){
@@ -29,6 +30,12 @@ public class MainActivity extends AppCompatActivity{
 
 
         }
+    }
+
+    private void moveToNextIntent(){
+        Intent intent = new Intent(this, GameActivity.class);
+        startActivity(intent);
+
     }
 
 
