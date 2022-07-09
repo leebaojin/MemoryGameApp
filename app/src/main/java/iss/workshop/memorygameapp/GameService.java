@@ -12,6 +12,7 @@ public class GameService {
     private int firstMove;
     private int secondMove;
     private boolean[] solvedImages;
+    private int numSolved;
 
 
     public GameService(String[] validImages) throws InsufficientGameImagesException {
@@ -23,11 +24,19 @@ public class GameService {
         this.firstOpen = true;
         this.firstMove = -1;
         this.secondMove =  -1;
+        this.numSolved = 0;
+    }
 
+    public int getFirstMove(){
+        return firstMove;
+    }
+
+    public int getNumSolved(){
+        return numSolved;
     }
 
     public String getImageByIndex(int index){
-        if(index > 0 && index<gameImages.length){
+        if(index >= 0 && index<gameImages.length){
             return gameImages[index];
         }
         return null;
@@ -59,6 +68,7 @@ public class GameService {
         if(gameImages[firstMove].equals(gameImages[secondMove])){
             solvedImages[firstMove] = true;
             solvedImages[secondMove] = true;
+            numSolved += 1;
             //Setting both to -1 after check
             firstMove = -1;
             secondMove = -1;
@@ -97,9 +107,10 @@ public class GameService {
         }
         gameImages = new String[imageInPlay*2];
         Random rnd = new Random();
+        int randInt;
         for(int i = 0; i < validImages.length; i++){
             //Placement of 1st image
-            int randInt = rnd.nextInt(intArray.size());
+            randInt = rnd.nextInt(intArray.size());
             gameImages[intArray.get(randInt)] = validImages[i];
             intArray.remove(randInt);
             //Placement of 2nd image
