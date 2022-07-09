@@ -2,6 +2,7 @@ package iss.workshop.memorygameapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +18,8 @@ public class GameActivity extends AppCompatActivity {
     Boolean timerRunning;
 
     GameService gs;
+
+    MediaPlayer mediaPlayer;
 
     private String[] gameString = {
             "game1.png", "game2.png", "game3.png", "game4.png", "game5.png", "game6.png"
@@ -43,6 +46,10 @@ public class GameActivity extends AppCompatActivity {
         catch(Exception e){
             finish();
         }
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.bgmusic);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
     }
 
     private void makeMove(int index){
@@ -103,5 +110,24 @@ public class GameActivity extends AppCompatActivity {
                 });
             }
         }).start();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mediaPlayer.start();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mediaPlayer.pause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mediaPlayer.stop();
+        mediaPlayer.release();
     }
 }

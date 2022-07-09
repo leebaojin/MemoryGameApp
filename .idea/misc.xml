@@ -3,6 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/NUS/Term 2/Android Development/CA/MemoryGameApp/app/src/main/res/layout/activity_game.xml" value="0.25" />
+        <entry key="..\:/NUS/Term 2/Android Development/CA/MemoryGameApp/app/src/main/res/layout/activity_loading_name.xml" value="0.2441123188405797" />
+        <entry key="..\:/NUS/Term 2/Android Development/CA/MemoryGameApp/app/src/main/res/layout/activity_loading_screen.xml" value="0.25" />
+        <entry key="..\:/NUS/Term 2/Android Development/CA/MemoryGameApp/app/src/main/res/layout/activity_main.xml" value="0.17831813576494426" />
+        <entry key="..\:/NUS/Term 2/Android Development/CA/MemoryGameApp/app/src/main/res/layout/activity_splash_screen.xml" value="0.2441123188405797" />
+        <entry key="..\:/NUS/Term 2/Android Development/CA/MemoryGameApp/app/src/main/res/layout/imagecell.xml" value="0.2441123188405797" />
         <entry key="..\:/Users/Ank/git/MemoryGameApp/app/src/main/res/layout/activity_game.xml" value="0.25" />
         <entry key="..\:/Users/Ank/git/MemoryGameApp/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/Users/leeba/AndroidStudioProjects/MemoryGameApp/app/src/main/res/layout/activity_game.xml" value="0.1796875" />
