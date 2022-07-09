@@ -3,8 +3,18 @@ package iss.workshop.memorygameapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+import java.util.Locale;
 
 public class GameActivity extends AppCompatActivity {
+
+    TextView timerTxt;
+    int seconds = 0;
+    Button stopBtn;
+    Boolean timerRunning;
 
     GameService gs;
 
@@ -16,6 +26,17 @@ public class GameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        startTimer();
+
+        stopBtn = findViewById(R.id.stopTimer);
+        stopBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                timerRunning = false;
+            }
+        });
+
         try {
             gs = new GameService(gameString);
         }
@@ -47,5 +68,40 @@ public class GameActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    public void startTimer() {
+        timerRunning = true;
+        timerTxt = findViewById(R.id.txtTimer);
+
+        //Create a background thread for timer
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //call runOnUiThread() to update a view from a background thread
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int hours = seconds / 3600;
+                        int minutes = (seconds % 3600) / 60;
+                        int secs = seconds % 60;
+
+                        // Format the seconds into hours, minutes, and seconds.
+                        String time = String.format(Locale.getDefault(), "%d:%02d:%02d", hours, minutes, secs);
+
+                        // Set the text view text.
+                        timerTxt.setText(time);
+
+                        // If thread is not interrupted, increment the seconds variable.
+                        if(timerRunning){
+                            seconds++;
+                        }
+
+                        // Post the code again with a delay of 1 second.
+                        timerTxt.postDelayed(this, 1000);
+                    }
+                });
+            }
+        }).start();
     }
 }
