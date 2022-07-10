@@ -33,8 +33,7 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class GameActivity extends AppCompatActivity {
-
-    private Button stopBtn;
+    
     private Button nextBtn;
     private TextView matchesTxt;
 
@@ -79,13 +78,6 @@ public class GameActivity extends AppCompatActivity {
         dialog = new Dialog(this);
 
         matchesTxt = findViewById(R.id.txtNumOfMatches);
-        stopBtn = findViewById(R.id.stopTimer);
-        stopBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                timerRunning = false;
-            }
-        });
 
         nextBtn = findViewById(R.id.nextPlayer);
         nextBtn.setOnClickListener(new View.OnClickListener() {
@@ -191,7 +183,10 @@ public class GameActivity extends AppCompatActivity {
                     nextBtn.setVisibility(View.VISIBLE);
                 }
                 else if(currentPlayer == 2){
-                    openWinDialog(playerScore[0],playerScore[1]);
+                    if(playerScore[0] != playerScore[1])
+                        openWinDialog(playerScore[0],playerScore[1]);
+                    else
+                        gameDrawDialog(playerScore[0],playerScore[1]);
                 }
 
                 Toast.makeText(this,"Game over",Toast.LENGTH_LONG).show();
@@ -326,6 +321,35 @@ public class GameActivity extends AppCompatActivity {
 
         winnerTxt = (TextView)vi.findViewById(R.id.dialog_txtView1);
         winnerTxt.setText(winnerMsg);
+        player1TimeTxt = (TextView)vi.findViewById(R.id.dialog_txtView2);
+        player1TimeTxt.setText("Player 1 : " + player1TimeFormatted);
+        player2TimeTxt = (TextView)vi.findViewById(R.id.dialog_txtView3);
+        player2TimeTxt.setText("Player 2 : " + player2TimeFormatted);
+
+        dialog.setContentView(vi);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        Button btnOk = dialog.findViewById(R.id.dialog_btnOK);
+
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+
+        dialog.show();
+    }
+
+    public void gameDrawDialog(int player1Seconds, int player2Seconds) {
+
+        String player1TimeFormatted = formatTime(player1Seconds);
+        String player2TimeFormatted = formatTime(player2Seconds);
+
+        LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View vi = inflater.inflate(R.layout.game_draw_layout_dialog, null);
+
         player1TimeTxt = (TextView)vi.findViewById(R.id.dialog_txtView2);
         player1TimeTxt.setText("Player 1 : " + player1TimeFormatted);
         player2TimeTxt = (TextView)vi.findViewById(R.id.dialog_txtView3);
