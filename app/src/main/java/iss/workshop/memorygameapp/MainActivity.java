@@ -3,14 +3,10 @@ package iss.workshop.memorygameapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -70,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
                     downloadThread.interrupt();
                     downloadThread = null;
                     isDownloading = false;
+
                     progressBar.setVisibility(View.GONE);
                     textView.setText("STOPPED");
                 }
@@ -99,8 +96,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         deleteAllDownloads();
-
-        adaptor = new ImageAdaptor(this);
+        File[] files = getExternalFilesDir(Environment.DIRECTORY_PICTURES).listFiles();
+        adaptor = new ImageAdaptor(this,files);
         gridView = findViewById(R.id.imageGrid);
         if (gridView != null) {
             gridView.setAdapter(adaptor);
@@ -220,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
                             if (Thread.interrupted()) {
                                 return;
                             }
-                            adaptor.notifyDataSetChanged();
+                            UpdateGridViewImages();
                         }
                     });
                 }
@@ -229,30 +226,47 @@ public class MainActivity extends AppCompatActivity {
         downloadThread.start();
     }
 
+    private void UpdateGridViewImages(){
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                File[] files = getExternalFilesDir(Environment.DIRECTORY_PICTURES).listFiles();
+                adaptor.UpdateFiles(files);
+                adaptor.notifyDataSetChanged();
+            }
+        });
+    }
+
     protected boolean downloadMultipleImages(String... imgUrls) {
 
         try {
-            for(int i = 0; i < imgUrls.length; i++){
-                String imgUrl = imgUrls[i];
-                URL urlImg = new URL(imgUrl);
-                InputStream in = urlImg.openStream();
-                File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                File destFile = new File(dir, i+1 + ".jpg");
-                OutputStream out = new FileOutputStream(destFile);
+            if (imgUrls != null) {
+                for (int i = 0; i < imgUrls.length; i++) {
+                    String imgUrl = imgUrls[i];
+                    if (imgUrl!= null) {
+                        URL urlImg = new URL(imgUrl);
+                        InputStream in = urlImg.openStream();
+                        File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                        File destFile = new File(dir, i + 1 + ".jpg");
+                        OutputStream out = new FileOutputStream(destFile);
 
-                byte[] buffer = new byte[1024];
-                int bytesRead = -1;
-                while ((bytesRead = in.read(buffer)) != -1) {
-                    out.write(buffer, 0, bytesRead);
-                }
-                out.close();
-                in.close();
-                progress++;
-                progressBar.setProgress(progress,true);
-                if ( progress >= 20){
-                    textView.setText("Downloaded 20 out of 20 images!");
-                }else{
-                    textView.setText("Downloading " + progress + " out of 20 images...");
+                        byte[] buffer = new byte[1024];
+                        int bytesRead = -1;
+                        while ((bytesRead = in.read(buffer)) != -1) {
+                            out.write(buffer, 0, bytesRead);
+                        }
+                        out.close();
+                        in.close();
+                        progress++;
+                        progressBar.setProgress(progress, true);
+                        UpdateGridViewImages();
+                        if (progress >= 20) {
+                            textView.setText("Downloaded 20 out of 20 images!");
+                        } else {
+                            textView.setText("Downloading " + progress + " out of 20 images...");
+                        }
+                    }
                 }
             }
             return true;

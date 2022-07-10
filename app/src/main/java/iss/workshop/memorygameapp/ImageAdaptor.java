@@ -24,7 +24,7 @@ public class ImageAdaptor extends ArrayAdapter<Object> {
     private final Context context;
     protected String imageName;
     protected int resourceSize;
-    protected List<Bitmap> gridViewImages = new ArrayList<>();
+    protected File[] files;
 
     public ImageAdaptor(@NonNull Context context, String imageName, int resourceSize) {
         super(context, cellLayout);
@@ -35,35 +35,54 @@ public class ImageAdaptor extends ArrayAdapter<Object> {
         addAll(new Object[resourceSize]);
     }
 
-    public ImageAdaptor(@NonNull Context context){
+    public ImageAdaptor(@NonNull Context context,File[] files){
         super(context, cellLayout);
         this.context = context;
         this.resourceSize = 20;
-
+        this.files = files;
         addAll(new Object[resourceSize]);
     }
 
+    public void UpdateFiles(File[] files){
+        this.files = files;
+    }
+
     public View getView(int pos, View view, ViewGroup parent){
-        File[] files = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).listFiles();
+        ImageView imageView;
+        try {
+            if (view == null) {
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+                view = inflater.inflate(R.layout.imagecell, parent, false);
+            }
+            //Set the image for imageDisplay
+            //Assume no image has been downloaded
+            imageView = view.findViewById(R.id.imageView);
+            if (this.files != null && this.files.length > 0) {
+                if (this.files[pos] != null) {
+                    File destFile = this.files[pos];
+                    Bitmap bitmap = BitmapFactory.decodeFile(destFile.getAbsolutePath());
+                    imageView.setImageBitmap(bitmap);
+                } else {
+                    int id = context.getResources().getIdentifier("blankimage", "drawable", context.getPackageName());
+                    imageView.setImageResource(id);
+                }
+            } else {
+                int id = context.getResources().getIdentifier("blankimage", "drawable", context.getPackageName());
+                imageView.setImageResource(id);
+            }
 
-        if(view== null){
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.imagecell,parent,false);
-        }
-        //Set the image for imageDisplay
-        //Assume no image has been downloaded
-        ImageView imageView = view.findViewById(R.id.imageView);
-        if(files != null && files.length > 0){
-            File destFile = files[pos];
-            Bitmap bitmap = BitmapFactory.decodeFile(destFile.getAbsolutePath());
-            imageView.setImageBitmap(bitmap);
-            imageView.setAlpha(0.5f);
-        } else {
-            int id = context.getResources().getIdentifier("blankimage","drawable",context.getPackageName());
+            return view;
+        } catch (Exception ex){
+            // handles non-graceful interruption of fetch
+            if (view == null) {
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+                view = inflater.inflate(R.layout.imagecell, parent, false);
+            }
+            int id = context.getResources().getIdentifier("blankimage", "drawable", context.getPackageName());
+            imageView = view.findViewById(R.id.imageView);
             imageView.setImageResource(id);
+            return view;
         }
-
-        return view;
     }
 
 
