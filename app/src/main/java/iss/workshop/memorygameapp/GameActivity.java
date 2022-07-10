@@ -23,17 +23,24 @@ import java.util.concurrent.TimeUnit;
 
 public class GameActivity extends AppCompatActivity {
 
-    TextView timerTxt;
-    int seconds = 0;
-    Button stopBtn;
-    Boolean timerRunning;
+    private TextView timerTxt;
+    private Button stopBtn;
+    private Button nextBtn;
     private TextView matchesTxt;
+
     private File dir;
+
+    private int[] playerScore = {0,0};
+    private int currentPlayer;
+
+    private int seconds = 0;
+    private Boolean timerRunning;
+    private GameService gs;
     private boolean isWaitingClose;
 
-    private GameService gs;
-
     MediaPlayer mediaPlayer;
+
+
 
     private String[] gameString = {
             "gameimg0.jpg", "gameimg1.jpg", "gameimg2.jpg", "gameimg3.jpg", "gameimg4.jpg", "gameimg5.jpg"
@@ -47,6 +54,7 @@ public class GameActivity extends AppCompatActivity {
 
         startTimer();
 
+        matchesTxt = findViewById(R.id.txtNumOfMatches);
         stopBtn = findViewById(R.id.stopTimer);
         stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,17 +63,19 @@ public class GameActivity extends AppCompatActivity {
             }
         });
 
-        matchesTxt = findViewById(R.id.txtNumOfMatches);
-
-        try {
-            gs = new GameService(gameString);
-            isWaitingClose = false;
-            setGridImages();
-        }
-        catch(Exception e){
-            finish();
-        }
-
+        nextBtn = findViewById(R.id.nextPlayer);
+        nextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setupGame();
+                view.setVisibility(View.GONE);
+                seconds = 0; // Restart timer
+                currentPlayer += 1;
+                startTimer();
+            }
+        });
+        currentPlayer = 1;
+        setupGame();
 
 
         mediaPlayer = MediaPlayer.create(this, R.raw.bgmusic);
@@ -73,7 +83,37 @@ public class GameActivity extends AppCompatActivity {
         mediaPlayer.start();
     }
 
-    private void makeMove(AdapterView<?> adapterView, int index) throws InterruptedException {
+    private void setupGame(){
+        try {
+            gs = new GameService(gameString);
+            isWaitingClose = false;
+            setGridImages();
+            matchesTxt.setText(String.valueOf(gs.getNumSolved()) +" of 6 matches");
+        }
+        catch(Exception e){
+            finish();
+        }
+    }
+
+    private void setGridImages(){
+        //Setting up grid Images
+        ImageAdaptor adaptor = new ImageAdaptor(this,"cross_image",12);
+        GridView gridView = findViewById(R.id.gameGrid);
+        if(gridView != null){
+            gridView.setAdapter(adaptor);
+            gridView.setNumColumns(3);
+
+            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    makeMove(adapterView, i);
+                }
+            });
+        }
+    }
+
+    private void makeMove(AdapterView<?> adapterView, int index)  {
+        //This handles the gameplay
         if(isWaitingClose || gs.isOpen(index)){
             //Already opened this index
             return;
@@ -90,6 +130,8 @@ public class GameActivity extends AppCompatActivity {
             if(gs.CheckMatch()){
                 //If check match is a success
                 setImageOnIndex(adapterView, index, imageName);
+
+                //Set text if match is a success
                 matchesTxt.setText(String.valueOf(gs.getNumSolved()) +" of 6 matches");
             }
             else{
@@ -111,31 +153,15 @@ public class GameActivity extends AppCompatActivity {
             if(gs.isGameOver()){
                 //If game is over
                 timerRunning = false; // Stop timer
+                playerScore[currentPlayer-1]=seconds;
+                if(currentPlayer<2){
+                    nextBtn.setVisibility(View.VISIBLE);
+                }
+
                 Toast.makeText(this,"Game over",Toast.LENGTH_LONG).show();
             }
         }
 
-    }
-
-    private void setGridImages(){
-        ImageAdaptor adaptor = new ImageAdaptor(this,"cross_image",12);
-        GridView gridView = findViewById(R.id.gameGrid);
-        if(gridView != null){
-            gridView.setAdapter(adaptor);
-            gridView.setNumColumns(3);
-
-            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    try {
-                        makeMove(adapterView, i);
-                    }
-                    catch(Exception e){
-
-                    }
-                }
-            });
-        }
     }
 
     private void setImageOnIndex(AdapterView<?> adapterView, int index, String imageName){
