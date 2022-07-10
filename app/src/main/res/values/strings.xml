@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">MemoryGameApp</string>
     <string name="mainTitle">Enter a URL to start playing!</string>
+    <string name="invalidUrlMsg">Invalid URL!</string>
 </resources>

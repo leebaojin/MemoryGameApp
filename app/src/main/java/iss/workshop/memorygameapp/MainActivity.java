@@ -18,8 +18,10 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -46,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     AsyncTask task;
     Thread downloadThread;
     boolean isDownloading;
+    ImageAdaptor adaptor;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
 
         progressBar = findViewById(R.id.progressBar);
         progressBar.setMax(20);
-
         progressBar.setVisibility(View.GONE);
 
         textView = findViewById(R.id.textView);
@@ -84,7 +87,9 @@ public class MainActivity extends AppCompatActivity {
                 if (task !=null && (task.getStatus() == AsyncTask.Status.PENDING || task.getStatus() == AsyncTask.Status.RUNNING )){
                     task.cancel(true);
                 }
-                progressBar.setVisibility(View.VISIBLE);
+
+                showProgress(true);
+
                 String strURL = urlInput.getText().toString();
                 task = new ImagesWebScrape(THIS).execute(strURL);
 
@@ -92,11 +97,6 @@ public class MainActivity extends AppCompatActivity {
                 //https://www.google.com/search?q=flower&tbm=isch
                 //https://stocksnap.io/search/beach
                 //https://stocksnap.io
-
-//                if (progressBar.getVisibility() == View.VISIBLE) {
-//
-//                }
-
             }
         });
 
@@ -110,11 +110,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         
-
         moveToNextIntent();
-        ImageAdaptor adaptor = new ImageAdaptor(this,"blankimage",20);
-        GridView gridView = findViewById(R.id.imageGrid);
-        if(gridView != null){
+        deleteAllDownloads();
+
+        adaptor = new ImageAdaptor(this);
+        gridView = findViewById(R.id.imageGrid);
+        if (gridView != null) {
             gridView.setAdapter(adaptor);
             gridView.setNumColumns(4);
 
@@ -134,6 +135,45 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void showProgress(boolean show){
+        if (show){
+            progressBar.setVisibility(View.VISIBLE);
+            textView.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.setVisibility(View.GONE);
+            textView.setVisibility(View.GONE);
+        }
+
+    }
+
+    private void deleteAllDownloads(){
+        File[] files = getExternalFilesDir(Environment.DIRECTORY_PICTURES).listFiles();
+        if (files != null) {
+            for (File f : files) {
+                boolean result = f.delete();
+            }
+        }
+    }
+
+    //for use in imagecell.xml
+    public void setImageViewAlpha(View v){
+        ImageView imageView = v.findViewById(R.id.imageView);
+        if(imageView.getAlpha() != 1f){
+            imageView.setAlpha(1f);
+        } else {
+            imageView.setAlpha(0.5f);
+        }
+    }
+
+    private void closeKeyboard()
+    {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
     private static class ImagesWebScrape extends AsyncTask<String, Integer, Elements> {
         private final WeakReference<MainActivity> activityReference;
 
@@ -143,15 +183,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-
             super.onPreExecute();
-
-            File[] files = activityReference.get().getExternalFilesDir(Environment.DIRECTORY_PICTURES).listFiles();
-            if (files != null) {
-                for (File f : files) {
-                    boolean result = f.delete();
-                }
-            }
+            activityReference.get().deleteAllDownloads();
             activityReference.get().progress = 0;
             activityReference.get().textView.setText("Downloading images...");
         }
@@ -176,6 +209,11 @@ public class MainActivity extends AppCompatActivity {
             int numOfImages = 20;
             int imgCounter = 1;
             String[] imgUrls = new String[20];
+            if (elements == null){
+                Toast.makeText(activityReference.get(), R.string.invalidUrlMsg, Toast.LENGTH_SHORT).show();
+                activityReference.get().showProgress(false);
+                return;
+            }
             for (Element e : elements) {
                 if (imgCounter <= numOfImages) {
                     String imgUrl = e.attr("src");
@@ -201,9 +239,7 @@ public class MainActivity extends AppCompatActivity {
                             if (Thread.interrupted()) {
                                 return;
                             }
-//                            Bitmap bitmap = BitmapFactory.decodeFile(destFile.getAbsolutePath());
-//                            GridView gridView = findViewById(R.id.imageGrid);
-//                            gridView.setImageBitmap(bitmap);
+                            adaptor.notifyDataSetChanged();
                         }
                     });
                 }
@@ -234,8 +270,6 @@ public class MainActivity extends AppCompatActivity {
                 progressBar.setProgress(progress,true);
                 if ( progress >= 20){
                     textView.setText("Downloaded 20 out of 20 images!");
-                    Thread.sleep(1000);
-                    progressBar.setVisibility(View.GONE);
                 }else{
                     textView.setText("Downloading " + progress + " out of 20 images...");
                 }
@@ -244,30 +278,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
-        }
-    }
-
-    private void closeKeyboard()
-    {
-        // this will give us the view
-        // which is currently focus
-        // in this layout
-        View view = this.getCurrentFocus();
-
-        // if nothing is currently
-        // focus then this will protect
-        // the app from crash
-        if (view != null) {
-
-            // now assign the system
-            // service to InputMethodManager
-            InputMethodManager manager
-                    = (InputMethodManager)
-                    getSystemService(
-                            Context.INPUT_METHOD_SERVICE);
-            manager
-                    .hideSoftInputFromWindow(
-                            view.getWindowToken(), 0);
         }
     }
 }
