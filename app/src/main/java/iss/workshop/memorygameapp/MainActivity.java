@@ -4,6 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -31,12 +34,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     EditText urlInput;
     Button fetch;
+    Button proceed;
     GridView gridView;
     ProgressBar progressBar;
     ObjectAnimator progressAnimator;
@@ -46,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     Thread downloadThread;
     boolean isDownloading;
     ImageAdaptor adaptor;
-    List<String> selectedImgs;
+    List<String> selectedImgs = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
 
         textView = findViewById(R.id.textView);
+
+        proceed = findViewById(R.id.proceedBtn);
+        proceed.setVisibility(View.GONE);
 
         urlInput = findViewById(R.id.urlInput);
         urlInput.setText("https://stocksnap.io"); // set default value to save typing
@@ -111,15 +119,27 @@ public class MainActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     setImageViewAlpha(view);
                     ImageView imageView = view.findViewById(R.id.imageView);
-                    String path = imageView.getTag().toString();
-                    // BUG: need to show text if tap on no image. app crashes if no tag
-                    if (imageView == null || path == null) {
+                    // Bugs: if no image in imageview, clicking causes app to crash
+                    // if download once before alr, and click again, does not add to list at all.
+                    if (imageView == null) {
                         textView.setText("Press Fetch to try again!");
+                        return;
                     }
-                    else {
+
+                    if (selectedImgs.size() < 6) {
+                        textView.setText("You have chosen " + selectedImgs.size() + " images!");
+                        String path = imageView.getTag().toString();
                         selectedImgs.add(path);
+                        if (selectedImgs.size() == 6){
+                            proceed.setVisibility(View.VISIBLE);
+                        }
+                        return;
                     }
+
+
                 }
+                //   textView.setText(getResources().getResourceEntryName(imageView.getId()));
+//                    String path = getRealPathFromURI(getApplicationContext(), imageUri)
             });
         }
 
@@ -285,6 +305,21 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public String getRealPathFromURI(Context context, Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = {MediaStore.Images.Media.DATA};
+            cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
     }
 }
