@@ -65,13 +65,15 @@ public class GameService {
         if(firstMove == -1|| secondMove == -1){
             return false;
         }
+        if(firstMove == secondMove){
+            return false;
+        }
         if(gameImages[firstMove].equals(gameImages[secondMove])){
             solvedImages[firstMove] = true;
             solvedImages[secondMove] = true;
             numSolved += 1;
             //Setting both to -1 after check
-            firstMove = -1;
-            secondMove = -1;
+
             return true;
         }
         //Setting both to -1 after check
@@ -80,11 +82,17 @@ public class GameService {
         return false;
     }
 
+    public void resetMoves(){
+        //To reset moves
+        firstMove = -1;
+        secondMove = -1;
+    }
+
     public boolean isOpen(int index){
         if(index < 0 || index > solvedImages.length){
             return false;
         }
-        if(index == firstMove){
+        if(index == firstMove || index == secondMove){
             return false;
         }
         return solvedImages[index];

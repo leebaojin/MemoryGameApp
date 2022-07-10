@@ -129,13 +129,17 @@ public class GameActivity extends AppCompatActivity {
         }else{
             //Get firstmove index
             int firstMove = gs.getFirstMove();
+            if(index == firstMove){
+                //Multiple clicks
+                return;
+            }
             //Second time open
             String imageName = gs.makeMove(index);
 
             if(gs.CheckMatch()){
                 //If check match is a success
                 setImageOnIndex(adapterView, index, imageName);
-
+                gs.resetMoves();
                 //Set text if match is a success
                 matchesTxt.setText(String.valueOf(gs.getNumSolved()) +" of 6 matches");
             }
@@ -150,6 +154,7 @@ public class GameActivity extends AppCompatActivity {
                         setImageToDefault(adapterView, index);
                         setImageToDefault(adapterView, firstMove);
                         isWaitingClose = false;
+                        gs.resetMoves();
                     }
                 },1000);
 
