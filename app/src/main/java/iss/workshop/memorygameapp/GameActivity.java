@@ -2,6 +2,10 @@ package iss.workshop.memorygameapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -181,14 +185,35 @@ public class GameActivity extends AppCompatActivity {
                     bitmap.getWidth(), bitmap.getWidth());
         }
 
-        imgview.setImageBitmap(bitmap);
+        //imgview.setImageBitmap(bitmap);
+        flipAnimation(imgview,bitmap);
     }
 
     private void setImageToDefault(AdapterView<?> adapterView, int index){
         View myview = adapterView.findViewWithTag(String.valueOf(index));
         ImageView imgview = myview.findViewById(R.id.imageView);
         //int id = context.getResources().getIdentifier(imageName,"drawable",context.getPackageName());
-        imgview.setImageResource(R.drawable.cross_image);
+        //imgview.setImageResource(R.drawable.cross_image);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cross_image);
+        flipAnimation(imgview,bitmap);
+    }
+
+    private void flipAnimation(ImageView imgview, Bitmap nextimg){
+        ObjectAnimator objectAnimator1 = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.flip_img);
+        ObjectAnimator objectAnimator2 = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.flip_img2);
+        objectAnimator1.setTarget(imgview);
+        objectAnimator2.setTarget(imgview);
+        objectAnimator1.setDuration(100);
+        objectAnimator2.setDuration(100);
+        objectAnimator1.start();
+        objectAnimator1.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                objectAnimator2.start();
+                imgview.setImageBitmap(nextimg);
+            }
+        });
+
     }
 
     public void startTimer() {
