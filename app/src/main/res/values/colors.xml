@@ -10,4 +10,6 @@
     <color name="color_yellow">#FFC107</color>
     <color name="color_red">#D3443A</color>
     <color name="btn_next">#FFC107</color>
+    <color name="lightgrey">#bfbfbf</color>
+    <color name="darkgrey">#747676</color>
 </resources>
