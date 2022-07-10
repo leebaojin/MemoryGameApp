@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 closeKeyboard();
+                selectedImgs.clear();
                 if (task !=null && (task.getStatus() == AsyncTask.Status.PENDING || task.getStatus() == AsyncTask.Status.RUNNING )){
                     task.cancel(true);
                 }
@@ -119,8 +120,9 @@ public class MainActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     setImageViewAlpha(view);
                     ImageView imageView = view.findViewById(R.id.imageView);
-                    // Bugs: if no image in imageview, clicking causes app to crash
-                    // if download once before alr, and click again, does not add to list at all.
+                    // Bugs: 1. if no image in imageview, clicking causes app to crash
+                    // 2. if download once before alr, and click again, does not add to list at all.
+                    // 3. (TODO) clicking on same image twice counts wrongly -> need to check based on view alpha
                     if (imageView == null) {
                         textView.setText("Press Fetch to try again!");
                         return;
