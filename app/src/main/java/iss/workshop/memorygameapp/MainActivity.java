@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     int progress = 0;
     AsyncTask task;
     Thread downloadThread;
+    boolean isDownloading;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,12 +64,16 @@ public class MainActivity extends AppCompatActivity {
         urlInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (downloadThread != null) {
+                // stop download if download thread is running
+                if (downloadThread != null && isDownloading == true) {
                     downloadThread.interrupt();
+                    downloadThread = null;
+                    isDownloading = false;
+                    progressBar.setVisibility(View.GONE);
+                    textView.setText("STOPPED");
                 }
             }
         });
-
 
         fetch = findViewById(R.id.fetchBtn);
         MainActivity THIS = this;
@@ -184,15 +190,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void startDownloadMultipleImages(String... imgUrls) {
-
-//        boolean isDownloading = true;
         downloadThread = new Thread(new Runnable() {
             @Override
             public void run() {
+                isDownloading = true;
                 if (downloadMultipleImages(imgUrls)) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            if (Thread.interrupted()) {
+                                return;
+                            }
 //                            Bitmap bitmap = BitmapFactory.decodeFile(destFile.getAbsolutePath());
 //                            GridView gridView = findViewById(R.id.imageGrid);
 //                            gridView.setImageBitmap(bitmap);
