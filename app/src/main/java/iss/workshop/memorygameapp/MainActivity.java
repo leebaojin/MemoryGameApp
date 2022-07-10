@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                     isDownloading = false;
 
                     progressBar.setVisibility(View.GONE);
-                    textView.setText("STOPPED");
+                    textView.setText("Press Fetch to try again!");
                 }
             }
         });
