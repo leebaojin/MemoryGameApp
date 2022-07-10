@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -30,6 +31,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.net.URL;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     Thread downloadThread;
     boolean isDownloading;
     ImageAdaptor adaptor;
-
+    List<String> selectedImgs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +110,15 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     setImageViewAlpha(view);
+                    ImageView imageView = view.findViewById(R.id.imageView);
+                    String path = imageView.getTag().toString();
+                    // BUG: need to show text if tap on no image. app crashes if no tag
+                    if (imageView == null || path == null) {
+                        textView.setText("Press Fetch to try again!");
+                    }
+                    else {
+                        selectedImgs.add(path);
+                    }
                 }
             });
         }

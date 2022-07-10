@@ -62,6 +62,7 @@ public class ImageAdaptor extends ArrayAdapter<Object> {
                     File destFile = this.files[pos];
                     Bitmap bitmap = BitmapFactory.decodeFile(destFile.getAbsolutePath());
                     imageView.setImageBitmap(bitmap);
+                    imageView.setTag(destFile.getAbsolutePath());
                 } else {
                     int id = context.getResources().getIdentifier("blankimage", "drawable", context.getPackageName());
                     imageView.setImageResource(id);
