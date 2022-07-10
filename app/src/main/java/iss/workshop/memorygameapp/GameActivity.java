@@ -42,16 +42,16 @@ public class GameActivity extends AppCompatActivity {
     private int[] playerScore = {0,0};
     private int currentPlayer;
     private int seconds = 0;
-    TimerTask timerTask;
-    Timer timer;
+    private TimerTask timerTask;
+    private Timer timer;
     private TextView timerTxt;
 
     private Boolean timerRunning;
     private GameService gs;
-    private boolean isWaitingClose;
+    private boolean isWaitingClose; //To check if the animation is still in progress
 
-    MediaPlayer mediaPlayer;
-    SoundPlayer sound;
+    private MediaPlayer mediaPlayer;
+    private SoundPlayer sound;
 
     Dialog dialog;
     private TextView winnerTxt;
@@ -67,22 +67,20 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        //Setting up the basics
+        //Getting required attributes
+        dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        dialog = new Dialog(this);
         sound = new SoundPlayer(this);
 
-        dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
+        //Getting the required views
         timerTxt = findViewById(R.id.txtTimer);
-        timer = new Timer();
-        startTimer();
-
-        dialog = new Dialog(this);
-
         matchesTxt = findViewById(R.id.txtNumOfMatches);
-
         nextBtn = findViewById(R.id.nextPlayer);
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Restart the game for the next player
                 setupGame();
                 view.setVisibility(View.GONE);
                 currentPlayer += 1;
@@ -90,16 +88,29 @@ public class GameActivity extends AppCompatActivity {
                 startTimer();
             }
         });
+
+        //Setting up the parameters and start timer
         currentPlayer = 1;
         setupGame();
+        timer = new Timer();
+        startTimer();
 
-
+        //Start the background music
         mediaPlayer = MediaPlayer.create(this, R.raw.bgmusic);
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
     }
 
+    private void obtainGameImages(){
+        Intent intent = getIntent();
+        //To implement the code for getting the images
+
+        //To implement the code for setting the images
+        //gameString =
+    }
+
     private void setupGame(){
+        //Create a new game to play
         try {
             gs = new GameService(gameString);
             isWaitingClose = false;
@@ -196,6 +207,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void setImageOnIndex(AdapterView<?> adapterView, int index, String imageName){
+        //This sets the image
         View myview = adapterView.findViewWithTag(String.valueOf(index));
         ImageView imgview = myview.findViewById(R.id.imageView);
         File imgfile = new File(dir,imageName);
@@ -216,6 +228,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void setImageToDefault(AdapterView<?> adapterView, int index){
+        //This returns the image to default
         View myview = adapterView.findViewWithTag(String.valueOf(index));
         ImageView imgview = myview.findViewById(R.id.imageView);
         //int id = context.getResources().getIdentifier(imageName,"drawable",context.getPackageName());
@@ -225,6 +238,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void flipAnimation(ImageView imgview, Bitmap nextimg){
+        //This acts as the animator for the image to flip
         ObjectAnimator objectAnimator1 = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.flip_img);
         ObjectAnimator objectAnimator2 = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.flip_img2);
         objectAnimator1.setTarget(imgview);
@@ -235,11 +249,12 @@ public class GameActivity extends AppCompatActivity {
         objectAnimator1.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
+                //Animator2 continues from animator1
+                //Animator1 flips half way and animator2 continues
                 objectAnimator2.start();
                 imgview.setImageBitmap(nextimg);
             }
         });
-
     }
 
     private void startTimer()

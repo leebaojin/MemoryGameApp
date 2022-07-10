@@ -18,8 +18,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="0 of 6 matches"
-
-            android:textSize="20sp"
+            android:layout_marginLeft="5dp"
+            android:textSize="24sp"
             />
 
         <TextView
@@ -28,24 +28,32 @@
             android:layout_height="wrap_content"
             android:gravity="right"
             android:layout_weight="1"
+            android:layout_marginRight="5dp"
             android:text="0:0:0"
 
-            android:textSize="20sp" />
+            android:textSize="24sp" />
     </LinearLayout>
 
     <GridView
         android:id="@+id/gameGrid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:visibility="visible">
 
     </GridView>
 
     <Button
         android:id="@+id/nextPlayer"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Next"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="Player 2"
+        android:layout_gravity="center_horizontal"
+        android:backgroundTint="@color/btn_next"
         android:visibility="gone" />
 
 </LinearLayout>
