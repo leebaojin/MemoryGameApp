@@ -42,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
     TextView textView;
     int progress = 0;
     AsyncTask task;
+    Thread downloadThread;
+    boolean isDownloading;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +59,19 @@ public class MainActivity extends AppCompatActivity {
 
         urlInput = findViewById(R.id.urlInput);
         urlInput.setText("https://stocksnap.io"); // set default value to save typing
+        urlInput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // stop download if download thread is running
+                if (downloadThread != null && isDownloading == true) {
+                    downloadThread.interrupt();
+                    downloadThread = null;
+                    isDownloading = false;
+                    progressBar.setVisibility(View.GONE);
+                    textView.setText("STOPPED");
+                }
+            }
+        });
 
         fetch = findViewById(R.id.fetchBtn);
         MainActivity THIS = this;
@@ -74,6 +90,11 @@ public class MainActivity extends AppCompatActivity {
                 //https://www.google.com/search?q=flower&tbm=isch
                 //https://stocksnap.io/search/beach
                 //https://stocksnap.io
+
+//                if (progressBar.getVisibility() == View.VISIBLE) {
+//
+//                }
+
             }
         });
 
@@ -149,14 +170,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void startDownloadMultipleImages(String... imgUrls) {
-
-        new Thread(new Runnable() {
+        downloadThread = new Thread(new Runnable() {
             @Override
             public void run() {
+                isDownloading = true;
                 if (downloadMultipleImages(imgUrls)) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            if (Thread.interrupted()) {
+                                return;
+                            }
 //                            Bitmap bitmap = BitmapFactory.decodeFile(destFile.getAbsolutePath());
 //                            GridView gridView = findViewById(R.id.imageGrid);
 //                            gridView.setImageBitmap(bitmap);
@@ -164,7 +188,8 @@ public class MainActivity extends AppCompatActivity {
                     });
                 }
             }
-        }).start();
+        });
+        downloadThread.start();
     }
 
     protected boolean downloadMultipleImages(String... imgUrls) {
