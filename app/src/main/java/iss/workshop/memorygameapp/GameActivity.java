@@ -127,6 +127,7 @@ public class GameActivity extends AppCompatActivity {
             int firstMove = gs.getFirstMove();
             //Second time open
             String imageName = gs.makeMove(index);
+
             if(gs.CheckMatch()){
                 //If check match is a success
                 setImageOnIndex(adapterView, index, imageName);
