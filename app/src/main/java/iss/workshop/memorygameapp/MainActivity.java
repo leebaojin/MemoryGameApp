@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
                 if (task !=null && (task.getStatus() == AsyncTask.Status.PENDING || task.getStatus() == AsyncTask.Status.RUNNING )){
                     task.cancel(true);
                 }
-                int count = 1;
                 progressBar.setVisibility(View.VISIBLE);
                 String strURL = urlInput.getText().toString();
                 task = new ImagesWebScrape(THIS).execute(strURL);
@@ -155,35 +154,31 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Elements elements) {
             int numOfImages = 20;
             int imgCounter = 1;
+            String[] imgUrls = new String[20];
             for (Element e : elements) {
                 if (imgCounter <= numOfImages) {
                     String imgUrl = e.attr("src");
                     if (imgUrl.contains("https") || imgUrl.contains("http")) {
-                        activityReference.get().progressBar.setVisibility(View.VISIBLE);
-                        activityReference.get().startDownloadImage(imgUrl, imgCounter);
+                        imgUrls[imgCounter - 1] = imgUrl;
                         imgCounter++;
                     }
                 }
             }
+            activityReference.get().startDownloadMultipleImages(imgUrls);
         }
     }
 
-
-    protected void startDownloadImage(String strImgURL, int counter) {
-        String strImgName = strImgURL.substring(strImgURL.lastIndexOf("/") + 1);
-        System.out.println("Saving" + strImgName);
-        File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File destFile = new File(dir, counter + ".jpg");
+    protected void startDownloadMultipleImages(String... imgUrls) {
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (downloadImage(strImgURL, destFile)) {
+                if (downloadMultipleImages(imgUrls)) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Bitmap bitmap = BitmapFactory.decodeFile(destFile.getAbsolutePath());
-                            GridView gridView = findViewById(R.id.imageGrid);
+//                            Bitmap bitmap = BitmapFactory.decodeFile(destFile.getAbsolutePath());
+//                            GridView gridView = findViewById(R.id.imageGrid);
 //                            gridView.setImageBitmap(bitmap);
                         }
                     });
@@ -192,28 +187,33 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-    protected boolean downloadImage(String strImgURL, File destFile) {
+    protected boolean downloadMultipleImages(String... imgUrls) {
 
         try {
-            URL urlImg = new URL(strImgURL);
-            InputStream in = urlImg.openStream();
-            OutputStream out = new FileOutputStream(destFile);
+            for(int i = 0; i < imgUrls.length; i++){
+                String imgUrl = imgUrls[i];
+                URL urlImg = new URL(imgUrl);
+                InputStream in = urlImg.openStream();
+                File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                File destFile = new File(dir, i+1 + ".jpg");
+                OutputStream out = new FileOutputStream(destFile);
 
-            byte[] buffer = new byte[1024];
-            int bytesRead = -1;
-            while ((bytesRead = in.read(buffer)) != -1) {
-                out.write(buffer, 0, bytesRead);
-            }
-            out.close();
-            in.close();
-            progress++;
-            progressBar.setProgress(progress,true);
-            if ( progress >= 20){
-                textView.setText("Downloaded 20 out of 20 images!");
-                Thread.sleep(1000);
-                progressBar.setVisibility(View.GONE);
-            }else{
-                textView.setText("Downloading " + progress + " out of 20 images...");
+                byte[] buffer = new byte[1024];
+                int bytesRead = -1;
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+                out.close();
+                in.close();
+                progress++;
+                progressBar.setProgress(progress,true);
+                if ( progress >= 20){
+                    textView.setText("Downloaded 20 out of 20 images!");
+                    Thread.sleep(1000);
+                    progressBar.setVisibility(View.GONE);
+                }else{
+                    textView.setText("Downloading " + progress + " out of 20 images...");
+                }
             }
             return true;
         } catch (Exception e) {
