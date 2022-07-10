@@ -52,6 +52,7 @@ public class GameActivity extends AppCompatActivity {
     private boolean isWaitingClose;
 
     MediaPlayer mediaPlayer;
+    SoundPlayer sound;
 
     Dialog dialog;
     private TextView winnerTxt;
@@ -66,6 +67,9 @@ public class GameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        sound = new SoundPlayer(this);
+
         dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         timerTxt = findViewById(R.id.txtTimer);
@@ -155,6 +159,7 @@ public class GameActivity extends AppCompatActivity {
             if(gs.CheckMatch()){
                 //If check match is a success
                 setImageOnIndex(adapterView, index, imageName);
+                sound.playMatchedSound();
                 gs.resetMoves();
                 //Set text if match is a success
                 matchesTxt.setText(String.valueOf(gs.getNumSolved()) +" of 6 matches");
@@ -173,6 +178,8 @@ public class GameActivity extends AppCompatActivity {
                         gs.resetMoves();
                     }
                 },1000);
+
+                sound.playUnmatchedSound();
 
             }
 
