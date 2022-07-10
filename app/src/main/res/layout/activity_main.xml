@@ -9,50 +9,67 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/mainTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:text="@string/mainTitle"
+        android:textSize="18sp"
         />
 
-    <EditText
-        android:id="@+id/urlInput"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textWebEmailAddress"
-        android:hint="Enter URL"
-        android:layout_marginLeft="10dp"
-        android:ems="15"/>
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/fetchBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Fetch"/>
-
-    <GridView
-        android:id="@+id/imageGrid"
+    <LinearLayout
+        android:id="@+id/urlbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:horizontalSpacing="2dp"
-        android:verticalSpacing="2dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:weightSum="1.0">
 
-        />
+        <EditText
+            android:id="@+id/urlInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:inputType="textWebEmailAddress"
+            android:hint="Enter URL"
+            android:ems="14"
+            android:background="@drawable/url_input_box_design"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/fetchBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:text="Fetch"/>
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="25sp"/>
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="9dp"
+        android:textSize="15sp" />
 
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="20dip"
-        android:maxHeight="20dip"
-        style="@android:style/Widget.ProgressBar.Horizontal"
-        />
+        android:progressDrawable="@drawable/progress_bar_design"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="9dp"
+        style="@android:style/Widget.ProgressBar.Horizontal" />
+
+    <GridView
+        android:id="@+id/imageGrid"
+        android:layout_width="match_parent"
+        android:layout_height="565dp"
+        android:horizontalSpacing="2dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:verticalSpacing="2dp" />
 
 </LinearLayout>
