@@ -6,13 +6,18 @@ import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -23,11 +28,12 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class GameActivity extends AppCompatActivity {
 
-    private TextView timerTxt;
     private Button stopBtn;
     private Button nextBtn;
     private TextView matchesTxt;
@@ -36,15 +42,21 @@ public class GameActivity extends AppCompatActivity {
 
     private int[] playerScore = {0,0};
     private int currentPlayer;
-
     private int seconds = 0;
+    TimerTask timerTask;
+    Timer timer;
+    private TextView timerTxt;
+
     private Boolean timerRunning;
     private GameService gs;
     private boolean isWaitingClose;
 
     MediaPlayer mediaPlayer;
 
-
+    Dialog dialog;
+    private TextView winnerTxt;
+    private TextView player1TimeTxt;
+    private TextView player2TimeTxt;
 
     private String[] gameString = {
             "gameimg0.jpg", "gameimg1.jpg", "gameimg2.jpg", "gameimg3.jpg", "gameimg4.jpg", "gameimg5.jpg"
@@ -56,7 +68,11 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
         dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
+        timerTxt = findViewById(R.id.txtTimer);
+        timer = new Timer();
         startTimer();
+
+        dialog = new Dialog(this);
 
         matchesTxt = findViewById(R.id.txtNumOfMatches);
         stopBtn = findViewById(R.id.stopTimer);
@@ -73,8 +89,8 @@ public class GameActivity extends AppCompatActivity {
             public void onClick(View view) {
                 setupGame();
                 view.setVisibility(View.GONE);
-                seconds = 0; // Restart timer
                 currentPlayer += 1;
+                resetTimer();
                 startTimer();
             }
         });
@@ -162,10 +178,13 @@ public class GameActivity extends AppCompatActivity {
 
             if(gs.isGameOver()){
                 //If game is over
-                timerRunning = false; // Stop timer
+                timerTask.cancel(); // Stop timer
                 playerScore[currentPlayer-1]=seconds;
                 if(currentPlayer<2){
                     nextBtn.setVisibility(View.VISIBLE);
+                }
+                else if(currentPlayer == 2){
+                    openWinDialog(playerScore[0],playerScore[1]);
                 }
 
                 Toast.makeText(this,"Game over",Toast.LENGTH_LONG).show();
@@ -221,39 +240,47 @@ public class GameActivity extends AppCompatActivity {
 
     }
 
-    public void startTimer() {
-        timerRunning = true;
-        timerTxt = findViewById(R.id.txtTimer);
-
-        //Create a background thread for timer
-        new Thread(new Runnable() {
+    private void startTimer()
+    {
+        timerTask = new TimerTask()
+        {
             @Override
-            public void run() {
-                //call runOnUiThread() to update a view from a background thread
-                runOnUiThread(new Runnable() {
+            public void run()
+            {
+                runOnUiThread(new Runnable()
+                {
                     @Override
-                    public void run() {
-                        int hours = seconds / 3600;
-                        int minutes = (seconds % 3600) / 60;
-                        int secs = seconds % 60;
-
-                        // Format the seconds into hours, minutes, and seconds.
-                        String time = String.format(Locale.getDefault(), "%d:%02d:%02d", hours, minutes, secs);
-
-                        // Set the text view text.
-                        timerTxt.setText(time);
-
-                        // If thread is not interrupted, increment the seconds variable.
-                        if(timerRunning){
-                            seconds++;
-                        }
-
-                        // Post the code again with a delay of 1 second.
-                        timerTxt.postDelayed(this, 1000);
+                    public void run()
+                    {
+                        seconds++;
+                        timerTxt.setText(getTimerText());
                     }
                 });
             }
-        }).start();
+
+        };
+        timer.scheduleAtFixedRate(timerTask, 0 ,1000);
+    }
+
+    public void resetTimer()
+    {
+        if(timerTask != null)
+        {
+            timerTask.cancel();
+            seconds = 0;
+            timerTxt.setText("");
+        }
+    }
+
+    private String getTimerText()
+    {
+        int secs = ((seconds % 86400) % 3600) % 60;
+        int minutes = ((seconds % 86400) % 3600) / 60;
+        int hours = ((seconds % 86400) / 3600);
+
+        String timeStr = String.format("%02d",hours) + " : " + String.format("%02d",minutes) + " : " + String.format("%02d",secs);
+
+        return timeStr;
     }
 
     @Override
@@ -273,5 +300,53 @@ public class GameActivity extends AppCompatActivity {
         super.onDestroy();
         mediaPlayer.stop();
         mediaPlayer.release();
+    }
+
+    public void openWinDialog(int player1Seconds, int player2Seconds){
+
+        String winnerMsg = "";
+        if(player1Seconds < player2Seconds){
+            winnerMsg = "Winner - Player 1";
+        }else{
+            winnerMsg = "Winner - Player 2";
+        }
+
+        String player1TimeFormatted = formatTime(player1Seconds);
+        String player2TimeFormatted = formatTime(player2Seconds);
+
+        LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View vi = inflater.inflate(R.layout.winner_layout_dialog, null);
+
+        winnerTxt = (TextView)vi.findViewById(R.id.dialog_txtView1);
+        winnerTxt.setText(winnerMsg);
+        player1TimeTxt = (TextView)vi.findViewById(R.id.dialog_txtView2);
+        player1TimeTxt.setText("Player 1 : " + player1TimeFormatted);
+        player2TimeTxt = (TextView)vi.findViewById(R.id.dialog_txtView3);
+        player2TimeTxt.setText("Player 2 : " + player2TimeFormatted);
+
+        dialog.setContentView(vi);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        Button btnOk = dialog.findViewById(R.id.dialog_btnOK);
+
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+
+        dialog.show();
+    }
+
+    public String formatTime(int sec){
+        int hours = sec / 3600;
+        int minutes = (sec % 3600) / 60;
+        int secs = sec % 60;
+
+        // Format the seconds into hours, minutes, and seconds.
+        String time = String.format(Locale.getDefault(), "%d:%02d:%02d", hours, minutes, secs);
+        return time;
     }
 }
