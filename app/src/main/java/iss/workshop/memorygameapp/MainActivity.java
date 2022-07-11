@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         THIS = this;
 
         urlInput = findViewById(R.id.urlInput);
-        urlInput.setText("https://stocksnap.io"); // set default value to save typing
+//        urlInput.setText("https://stocksnap.io"); // set default value to save typing
         urlInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //deleteAllDownloads();
+        deleteAllDownloads();
         File[] files = getExternalFilesDir(Environment.DIRECTORY_PICTURES).listFiles();
         adaptor = new ImageAdaptor(this,files);
         gridView = findViewById(R.id.imageGrid);
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                         setImageViewAlpha(view);
                         THIS.selectedItems.add(selectedFile);
                     } else {
-                        Toast.makeText(THIS,"SIX ONLY, BITCH",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(THIS,"Select Six Only!",Toast.LENGTH_SHORT).show();
                     }
 
                     if (THIS.selectedItems.size() == 6){
