@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -30,11 +31,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     EditText urlInput;
     Button fetch;
+    Button proceed;
     GridView gridView;
     ProgressBar progressBar;
     ObjectAnimator progressAnimator;
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     Thread downloadThread;
     boolean isDownloading;
     ImageAdaptor adaptor;
-
+    MainActivity THIS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
 
         textView = findViewById(R.id.textView);
+
+        THIS = this;
 
         urlInput = findViewById(R.id.urlInput);
         urlInput.setText("https://stocksnap.io"); // set default value to save typing
@@ -71,11 +76,11 @@ public class MainActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.GONE);
                     textView.setText("STOPPED");
                 }
+
             }
         });
 
         fetch = findViewById(R.id.fetchBtn);
-        MainActivity THIS = this;
         fetch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,7 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
                 String strURL = urlInput.getText().toString();
                 task = new ImagesWebScrape(THIS).execute(strURL);
-
+                THIS.selectedItems.clear();
+                proceed.setVisibility(View.GONE);
                 // tested on
                 //https://www.google.com/search?q=flower&tbm=isch
                 //https://stocksnap.io/search/beach
@@ -96,7 +102,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        deleteAllDownloads();
+        proceed = findViewById(R.id.proceedBtn);
+        proceed.setVisibility(View.GONE);
+        proceed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(THIS, GameActivity.class);
+                i.putExtra("selectedImages",THIS.selectedItems);
+                startActivity(i);
+            }
+        });
+
+        //deleteAllDownloads();
         File[] files = getExternalFilesDir(Environment.DIRECTORY_PICTURES).listFiles();
         adaptor = new ImageAdaptor(this,files);
         gridView = findViewById(R.id.imageGrid);
@@ -107,12 +124,31 @@ public class MainActivity extends AppCompatActivity {
             gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    setImageViewAlpha(view);
+                    String selectedFile = String.valueOf(i + 1) + ".jpg";
+
+                    if (THIS.selectedItems.contains(selectedFile)){
+                        THIS.selectedItems.remove(THIS.selectedItems.indexOf(selectedFile));
+                        setImageViewAlpha(view);
+                    }
+                    else if (THIS.selectedItems.size() < 6) {
+                        setImageViewAlpha(view);
+                        THIS.selectedItems.add(selectedFile);
+                    } else {
+                        Toast.makeText(THIS,"SIX ONLY, BITCH",Toast.LENGTH_SHORT).show();
+                    }
+
+                    if (THIS.selectedItems.size() == 6){
+                        proceed.setVisibility(View.VISIBLE);
+                    } else {
+                        proceed.setVisibility(View.GONE);
+                    }
                 }
             });
         }
 
     }
+
+    ArrayList<String> selectedItems = new ArrayList<String>();
 
     private void showProgress(boolean show){
         if (show){
