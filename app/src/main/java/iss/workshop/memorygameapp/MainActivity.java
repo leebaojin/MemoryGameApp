@@ -1,14 +1,11 @@
 package iss.workshop.memorygameapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -19,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -187,6 +186,18 @@ public class MainActivity extends AppCompatActivity {
             InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    private void goToGameActivity(){
+        if(selectedItems.size() != 6){
+            //Insufficient or too many images
+            return;
+        }
+        Intent intent = new Intent(this, GameActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList("gameImages",selectedItems);
+        intent.putExtra("gameBundle", bundle);
+        startActivity(intent);
     }
 
     private static class ImagesWebScrape extends AsyncTask<String, Integer, Elements> {
