@@ -1,7 +1,5 @@
 package iss.workshop.memorygameapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorListenerAdapter;
@@ -26,11 +24,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.io.File;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 public class GameActivity extends AppCompatActivity {
     
@@ -107,6 +106,16 @@ public class GameActivity extends AppCompatActivity {
 
         //To implement the code for setting the images
         //gameString =
+
+        //Validate that the image exist
+        for(String gameImageName: gameString){
+            File imgfile = new File(dir,gameImageName);
+            Bitmap bitmap = BitmapFactory.decodeFile(imgfile.getAbsolutePath());
+            if(bitmap == null){
+                Toast.makeText(this,"Fail to load images",Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
     }
 
     private void setupGame(){
@@ -212,7 +221,6 @@ public class GameActivity extends AppCompatActivity {
         ImageView imgview = myview.findViewById(R.id.imageView);
         File imgfile = new File(dir,imageName);
         Bitmap bitmap = BitmapFactory.decodeFile(imgfile.getAbsolutePath());
-
         //Resizing image to a square (can consider moving this to the main activity)
         if(bitmap.getWidth() > bitmap.getHeight()){
             bitmap = Bitmap.createBitmap(bitmap, bitmap.getWidth()/2- bitmap.getHeight()/2,0,
