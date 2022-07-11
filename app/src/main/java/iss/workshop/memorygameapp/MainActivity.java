@@ -122,17 +122,17 @@ public class MainActivity extends AppCompatActivity {
         
 
         // this portion is from 2nd part
-        btnNext = findViewById(R.id.buttonNext);
-
-        btnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), GameActivity.class);
-                startActivity(intent);
-            }
-        });
-        
-        moveToNextIntent();
+//        btnNext = findViewById(R.id.buttonNext);
+//
+//        btnNext.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(view.getContext(), GameActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+//
+//        moveToNextIntent();
         // end of portion from 2nd part
        
         
