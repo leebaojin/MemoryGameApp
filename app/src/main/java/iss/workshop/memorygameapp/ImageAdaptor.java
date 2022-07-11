@@ -52,7 +52,10 @@ public class ImageAdaptor extends ArrayAdapter<Object> {
         try {
             if (view == null) {
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-                view = inflater.inflate(R.layout.imagecell, parent, false);
+
+                view = inflater.inflate(cellLayout,parent,false);
+                view.setTag(String.valueOf(pos));
+
             }
             //Set the image for imageDisplay
             //Assume no image has been downloaded

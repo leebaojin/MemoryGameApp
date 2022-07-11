@@ -19,6 +19,26 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+
+import android.content.Intent;
+import android.animation.ObjectAnimator;
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -33,6 +53,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
 
     EditText urlInput;
     Button fetch;
@@ -107,13 +128,18 @@ public class MainActivity extends AppCompatActivity {
         proceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // this portion is from 1st part 
+
                 Intent i = new Intent(THIS, GameActivity.class);
                 i.putExtra("selectedImages",THIS.selectedItems);
                 startActivity(i);
             }
         });
 
+
         deleteAllDownloads();
+
         File[] files = getExternalFilesDir(Environment.DIRECTORY_PICTURES).listFiles();
         adaptor = new ImageAdaptor(this,files);
         gridView = findViewById(R.id.imageGrid);
@@ -145,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
+
         }
 
     }
@@ -179,6 +206,45 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    private void moveToNextIntent(){
+        Intent intent = new Intent(this, GameActivity.class);
+        startActivity(intent);
+
+
+    }
+
+    private void showProgress(boolean show){
+        if (show){
+            progressBar.setVisibility(View.VISIBLE);
+            textView.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.setVisibility(View.GONE);
+            textView.setVisibility(View.GONE);
+        }
+
+    }
+
+    private void deleteAllDownloads(){
+        File[] files = getExternalFilesDir(Environment.DIRECTORY_PICTURES).listFiles();
+        if (files != null) {
+            for (File f : files) {
+                boolean result = f.delete();
+            }
+        }
+    }
+
+    //for use in imagecell.xml
+    public void setImageViewAlpha(View v){
+        ImageView imageView = v.findViewById(R.id.imageView);
+        if(imageView.getAlpha() != 1f){
+            imageView.setAlpha(1f);
+        } else {
+            imageView.setAlpha(0.5f);
+        }
+    }
+
+
     private void closeKeyboard()
     {
         View view = this.getCurrentFocus();
@@ -187,6 +253,7 @@ public class MainActivity extends AppCompatActivity {
             manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+
 
     private void goToGameActivity(){
         if(selectedItems.size() != 6){
@@ -199,6 +266,8 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("gameBundle", bundle);
         startActivity(intent);
     }
+
+
 
     private static class ImagesWebScrape extends AsyncTask<String, Integer, Elements> {
         private final WeakReference<MainActivity> activityReference;
