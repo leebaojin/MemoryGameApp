@@ -36,7 +36,6 @@ public class ImageAdaptor extends ArrayAdapter<Object> {
         super(context, cellLayout);
         this.context = context;
         this.resourceSize = 20;
-        this.imageName = imageName;
         this.files = files;
         addAll(new Object[resourceSize]);
     }
