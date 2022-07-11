@@ -57,6 +57,7 @@ public class GameActivity extends AppCompatActivity {
     private TextView winnerTxt;
     private TextView player1TimeTxt;
     private TextView player2TimeTxt;
+    private String scoreDisplay;
 
     private String[] gameString = {
             "gameimg0.jpg", "gameimg1.jpg", "gameimg2.jpg", "gameimg3.jpg", "gameimg4.jpg", "gameimg5.jpg"
@@ -72,6 +73,7 @@ public class GameActivity extends AppCompatActivity {
         dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         dialog = new Dialog(this);
         sound = new SoundPlayer(this);
+        scoreDisplay = " " + getString(R.string.ofMatches);
 
         //Getting the required views
         timerTxt = findViewById(R.id.txtTimer);
@@ -111,7 +113,7 @@ public class GameActivity extends AppCompatActivity {
         }
         ArrayList<String> selectedItems = gameBundle.getStringArrayList("gameImages");
         if(selectedItems==null || selectedItems.size() < 6){
-            Toast.makeText(this,"Fail to load images",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,R.string.failToLoad,Toast.LENGTH_SHORT).show();
             finish();
         }
         //To implement the code for setting the images to gameString
@@ -125,7 +127,7 @@ public class GameActivity extends AppCompatActivity {
             File imgfile = new File(dir,gameImageName);
             Bitmap bitmap = BitmapFactory.decodeFile(imgfile.getAbsolutePath());
             if(bitmap == null){
-                Toast.makeText(this,"Fail to load images",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,R.string.failToLoad,Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
@@ -137,7 +139,7 @@ public class GameActivity extends AppCompatActivity {
             gs = new GameService(gameString);
             isWaitingClose = false;
             setGridImages();
-            matchesTxt.setText(String.valueOf(gs.getNumSolved()) +" of 6 matches");
+            matchesTxt.setText(String.valueOf(gs.getNumSolved()) +scoreDisplay);
         }
         catch(Exception e){
             finish();
@@ -187,7 +189,7 @@ public class GameActivity extends AppCompatActivity {
                 sound.playMatchedSound();
                 gs.resetMoves();
                 //Set text if match is a success
-                matchesTxt.setText(String.valueOf(gs.getNumSolved()) +" of 6 matches");
+                matchesTxt.setText(String.valueOf(gs.getNumSolved()) +scoreDisplay);
             }
             else{
                 //If check match fail
@@ -222,7 +224,7 @@ public class GameActivity extends AppCompatActivity {
                         gameDrawDialog(playerScore[0],playerScore[1]);
                 }
 
-                Toast.makeText(this,"Game over",Toast.LENGTH_LONG).show();
+                Toast.makeText(this,R.string.gameover,Toast.LENGTH_LONG).show();
             }
         }
 

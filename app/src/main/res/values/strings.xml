@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">MemoryGameApp</string>
     <string name="mainTitle">Enter a URL to start playing!</string>
+    <string name="mainTitleAfter">Select 6 images to start playing!</string>
+    <string name="mainTitleStart">Starting Game...</string>
     <string name="invalidUrlMsg">Invalid URL!</string>
+    <string name="failToLoad">Fail to load image</string>
+    <string name="ofMatches"> of 6 matches</string>
+    <string name="gameover">Game Over!</string>
 </resources>

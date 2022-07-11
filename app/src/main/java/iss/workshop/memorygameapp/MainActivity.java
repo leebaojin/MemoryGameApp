@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar progressBar;
     ObjectAnimator progressAnimator;
     TextView textView;
+    TextView titleView;
     int progress = 0;
     AsyncTask task;
     Thread downloadThread;
@@ -50,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     ImageAdaptor adaptor;
     MainActivity THIS;
     ArrayList<String> selectedItems = new ArrayList<String>();
+
+    private boolean startingGame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,14 +65,20 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
 
         textView = findViewById(R.id.textView);
+        titleView = findViewById(R.id.mainTitle);
 
         THIS = this;
+
+        startingGame = false;
 
         urlInput = findViewById(R.id.urlInput);
         urlInput.setText("https://www.google.com/search?q=flower&tbm=isch"); // set default value to save typing
         urlInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(startingGame){
+                    return;
+                }
                 // stop download if download thread is running
                 if (downloadThread != null && isDownloading == true) {
                     downloadThread.interrupt();
@@ -87,6 +97,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 closeKeyboard();
+                if(startingGame){
+                    return;
+                }
                 if (task !=null && (task.getStatus() == AsyncTask.Status.PENDING || task.getStatus() == AsyncTask.Status.RUNNING )){
                     task.cancel(true);
                 }
@@ -136,6 +149,9 @@ public class MainActivity extends AppCompatActivity {
                         textView.setText("Press Fetch to download images!");
                         return;
                     }
+                    if(startingGame){
+                        return;
+                    }
 
                     if (THIS.selectedItems.contains(selectedFile)){
                         THIS.selectedItems.remove(THIS.selectedItems.indexOf(selectedFile));
@@ -150,10 +166,18 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     if (THIS.selectedItems.size() == 6){
-                        proceed.setVisibility(View.VISIBLE);
-
+                        //Auto move to the game
+                        //proceed.setVisibility(View.VISIBLE);
+                        titleView.setText(R.string.mainTitleStart);
+                        startingGame = true;
                         //Proceed to start game activity after 6 images has been selected
-                        goToGameActivity();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                goToGameActivity();
+                            }
+                        },300);
+
                     } else {
                         proceed.setVisibility(View.GONE);
                     }
@@ -218,7 +242,10 @@ public class MainActivity extends AppCompatActivity {
         selectedItems = new ArrayList<String>();
         UpdateGridViewImages();
         proceed.setVisibility(View.GONE);
+
+        startingGame = false;
         startActivity(intent);
+        titleView.setText(R.string.mainTitleAfter);
     }
 
 
@@ -340,6 +367,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             fullyDownloaded = true;
+            titleView.setText(R.string.mainTitleAfter);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
