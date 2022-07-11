@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     AsyncTask task;
     Thread downloadThread;
     boolean isDownloading;
+    boolean fullyDownloaded;
     ImageAdaptor adaptor;
     MainActivity THIS;
     ArrayList<String> selectedItems = new ArrayList<String>();
@@ -131,6 +132,10 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     String selectedFile = String.valueOf(i + 1) + ".jpg";
+                    if (!fullyDownloaded) {
+                        textView.setText("Press Fetch to download images!");
+                        return;
+                    }
 
                     if (THIS.selectedItems.contains(selectedFile)){
                         THIS.selectedItems.remove(THIS.selectedItems.indexOf(selectedFile));
@@ -304,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected boolean downloadMultipleImages(String... imgUrls) {
-
+        fullyDownloaded = false;
         try {
             if (imgUrls != null) {
                 for (int i = 0; i < imgUrls.length; i++) {
@@ -334,6 +339,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
+            fullyDownloaded = true;
             return true;
         } catch (Exception e) {
             e.printStackTrace();
