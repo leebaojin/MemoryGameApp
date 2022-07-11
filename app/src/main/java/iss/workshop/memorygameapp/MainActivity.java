@@ -19,26 +19,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-
-import android.content.Intent;
-import android.animation.ObjectAnimator;
-import android.content.Context;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -166,6 +146,9 @@ public class MainActivity extends AppCompatActivity {
 
                     if (THIS.selectedItems.size() == 6){
                         proceed.setVisibility(View.VISIBLE);
+
+                        //Proceed to start game activity after 6 images has been selected
+                        goToGameActivity();
                     } else {
                         proceed.setVisibility(View.GONE);
                     }
@@ -173,44 +156,6 @@ public class MainActivity extends AppCompatActivity {
             });
 
         }
-
-    }
-
-    private void showProgress(boolean show){
-        if (show){
-            progressBar.setVisibility(View.VISIBLE);
-            textView.setVisibility(View.VISIBLE);
-        } else {
-            progressBar.setVisibility(View.GONE);
-            textView.setVisibility(View.GONE);
-        }
-
-    }
-
-    private void deleteAllDownloads(){
-        File[] files = getExternalFilesDir(Environment.DIRECTORY_PICTURES).listFiles();
-        if (files != null) {
-            for (File f : files) {
-                boolean result = f.delete();
-            }
-        }
-    }
-
-    //for use in imagecell.xml
-    public void setImageViewAlpha(View v){
-        ImageView imageView = v.findViewById(R.id.imageView);
-        if(imageView.getAlpha() != 1f){
-            imageView.setAlpha(1f);
-        } else {
-            imageView.setAlpha(0.5f);
-        }
-    }
-
-
-    private void moveToNextIntent(){
-        Intent intent = new Intent(this, GameActivity.class);
-        startActivity(intent);
-
 
     }
 
@@ -264,9 +209,12 @@ public class MainActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("gameImages",selectedItems);
         intent.putExtra("gameBundle", bundle);
+
+        selectedItems = new ArrayList<String>();
+        UpdateGridViewImages();
+        proceed.setVisibility(View.GONE);
         startActivity(intent);
     }
-
 
 
     private static class ImagesWebScrape extends AsyncTask<String, Integer, Elements> {

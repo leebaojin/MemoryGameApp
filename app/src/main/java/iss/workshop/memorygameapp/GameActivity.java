@@ -27,6 +27,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -89,6 +90,7 @@ public class GameActivity extends AppCompatActivity {
         });
 
         //Setting up the parameters and start timer
+        obtainGameImages(); //This will get the intent and the bundle info
         currentPlayer = 1;
         setupGame();
         timer = new Timer();
@@ -103,9 +105,20 @@ public class GameActivity extends AppCompatActivity {
     private void obtainGameImages(){
         Intent intent = getIntent();
         //To implement the code for getting the images
-
-        //To implement the code for setting the images
-        //gameString =
+        Bundle gameBundle = intent.getBundleExtra("gameBundle");
+        if(gameBundle == null){
+            finish();
+        }
+        ArrayList<String> selectedItems = gameBundle.getStringArrayList("gameImages");
+        if(selectedItems==null || selectedItems.size() < 6){
+            Toast.makeText(this,"Fail to load images",Toast.LENGTH_SHORT).show();
+            finish();
+        }
+        //To implement the code for setting the images to gameString
+        gameString = new String[6];
+        for(int i = 0; i < gameString.length; i++){
+            gameString[i] = selectedItems.get(i);
+        }
 
         //Validate that the image exist
         for(String gameImageName: gameString){
@@ -133,7 +146,7 @@ public class GameActivity extends AppCompatActivity {
 
     private void setGridImages(){
         //Setting up grid Images
-        ImageAdaptor adaptor = new ImageAdaptor(this,"cross_image",12);
+        ImageAdaptor adaptor = new ImageAdaptor(this,12);
         GridView gridView = findViewById(R.id.gameGrid);
         if(gridView != null){
             gridView.setAdapter(adaptor);
