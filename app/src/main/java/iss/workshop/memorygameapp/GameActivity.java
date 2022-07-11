@@ -219,15 +219,18 @@ public class GameActivity extends AppCompatActivity {
                 playerScore[currentPlayer-1]=seconds;
 
                 if(currentPlayer<noOfPlayer){
+                    //Check if there is a second player
                     nextBtn.setVisibility(View.VISIBLE);
                 }
                 else if(currentPlayer == 2){
+                    //If 2 player is playing
                     if(playerScore[0] != playerScore[1])
                         openWinDialog(playerScore[0],playerScore[1]);
                     else
                         gameDrawDialog(playerScore[0],playerScore[1]);
                 }
                 else if(currentPlayer == 1){
+                    //Single player
                     gameSingleDialog(playerScore[0]);
                 }
 

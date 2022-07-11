@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
             //Insufficient or too many images
             return;
         }
-        if(noOfPlayer != 1 || noOfPlayer !=2){
+        if(noOfPlayer != 1 && noOfPlayer !=2){
             noOfPlayer = 1;
         }
         Intent intent = new Intent(this, GameActivity.class);

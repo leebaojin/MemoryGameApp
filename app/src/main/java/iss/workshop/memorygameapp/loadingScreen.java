@@ -56,12 +56,12 @@ public class loadingScreen extends AppCompatActivity {
     }
 
     private void nextIntent(int noOfPlayer){
-        if(noOfPlayer != 1 || noOfPlayer != 2){
+        if(noOfPlayer != 1 && noOfPlayer != 2){
             noOfPlayer = 1;
         }
         Intent intent = new Intent(loadingScreen.this, MainActivity.class);
         intent.putExtra("playerNo", noOfPlayer);
         startActivity(intent);
-        finish();
+        //finish();
     }
 }
