@@ -63,6 +63,13 @@
         android:layout_marginBottom="9dp"
         style="@android:style/Widget.ProgressBar.Horizontal" />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/proceedBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Proceed"/>
+
     <GridView
         android:id="@+id/imageGrid"
         android:layout_width="match_parent"

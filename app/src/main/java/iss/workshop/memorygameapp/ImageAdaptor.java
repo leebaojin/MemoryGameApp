@@ -63,7 +63,7 @@ public class ImageAdaptor extends ArrayAdapter<Object> {
                     File destFile = this.files[pos];
                     Bitmap bitmap = BitmapFactory.decodeFile(destFile.getAbsolutePath());
                     imageView.setImageBitmap(bitmap);
-                    // imageView.setAlpha(0.5f);
+                    imageView.setAlpha(1f);
                 } else {
                     int id = context.getResources().getIdentifier("blankimage", "drawable", context.getPackageName());
                     imageView.setImageResource(id);
@@ -72,7 +72,7 @@ public class ImageAdaptor extends ArrayAdapter<Object> {
                 int id = context.getResources().getIdentifier("blankimage", "drawable", context.getPackageName());
                 imageView.setImageResource(id);
             }
-            
+
             return view;
         } catch (Exception ex){
             // handles non-graceful interruption of fetch
