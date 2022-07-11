@@ -30,7 +30,44 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/SplashScreenImage"
+        app:layout_constraintTop_toBottomOf="@id/SplashScreenImage"
         app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/btn1Player"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1 Player"
+        android:layout_marginTop="20dp"
+        android:textSize="24dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:visibility="gone"
+        android:backgroundTint="@color/blue"
+        app:layout_constraintTop_toBottomOf="@id/gameTitle"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btn2Player" />
+
+    <Button
+        android:id="@+id/btn2Player"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2 Player"
+        android:textSize="24dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        android:backgroundTint="@color/green"
+        app:layout_constraintTop_toBottomOf="@id/btn1Player"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

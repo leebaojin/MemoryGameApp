@@ -4,7 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/leeba/AndroidStudioProjects/MemoryGameApp/app/src/main/res/layout/activity_game.xml" value="0.1" />
+        <entry key="..\:/Users/leeba/AndroidStudioProjects/MemoryGameApp/app/src/main/res/layout/activity_loading_screen.xml" value="0.1796875" />
         <entry key="..\:/Users/leeba/AndroidStudioProjects/MemoryGameApp/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/leeba/AndroidStudioProjects/MemoryGameApp/app/src/main/res/layout/game_draw_layout_dialog.xml" value="0.1796875" />
         <entry key="..\:/Users/leeba/AndroidStudioProjects/MemoryGameApp/app/src/main/res/layout/imagecell.xml" value="0.165625" />
         <entry key="..\:/Users/leeba/AndroidStudioProjects/MemoryGameApp/app/src/main/res/layout/winner_layout_dialog.xml" value="0.1796875" />
       </map>

@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> selectedItems = new ArrayList<String>();
 
     private boolean startingGame;
+    private int noOfPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         THIS = this;
 
         startingGame = false;
+        getNoOfPlayer(); // Get number of players
 
         urlInput = findViewById(R.id.urlInput);
         urlInput.setText("https://www.google.com/search?q=flower&tbm=isch"); // set default value to save typing
@@ -234,9 +236,13 @@ public class MainActivity extends AppCompatActivity {
             //Insufficient or too many images
             return;
         }
+        if(noOfPlayer != 1 || noOfPlayer !=2){
+            noOfPlayer = 1;
+        }
         Intent intent = new Intent(this, GameActivity.class);
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("gameImages",selectedItems);
+        bundle.putInt("noOfPlayer",noOfPlayer);
         intent.putExtra("gameBundle", bundle);
 
         selectedItems = new ArrayList<String>();
@@ -246,6 +252,11 @@ public class MainActivity extends AppCompatActivity {
         startingGame = false;
         startActivity(intent);
         titleView.setText(R.string.mainTitleAfter);
+    }
+
+    private void getNoOfPlayer(){
+            Intent intent = getIntent();
+            noOfPlayer = intent.getIntExtra("playerNo", 1);
     }
 
 

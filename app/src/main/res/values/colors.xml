@@ -12,4 +12,6 @@
     <color name="btn_next">#FFC107</color>
     <color name="lightgrey">#bfbfbf</color>
     <color name="darkgrey">#747676</color>
+    <color name="blue">#5FA8ED</color>
+    <color name="green">#5FCDA4</color>
 </resources>

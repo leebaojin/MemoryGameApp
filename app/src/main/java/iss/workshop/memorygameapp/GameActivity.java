@@ -58,6 +58,7 @@ public class GameActivity extends AppCompatActivity {
     private TextView player1TimeTxt;
     private TextView player2TimeTxt;
     private String scoreDisplay;
+    private int noOfPlayer;
 
     private String[] gameString = {
             "gameimg0.jpg", "gameimg1.jpg", "gameimg2.jpg", "gameimg3.jpg", "gameimg4.jpg", "gameimg5.jpg"
@@ -131,6 +132,8 @@ public class GameActivity extends AppCompatActivity {
                 finish();
             }
         }
+
+        noOfPlayer = gameBundle.getInt("noOfPlayer",1);
     }
 
     private void setupGame(){
@@ -214,7 +217,8 @@ public class GameActivity extends AppCompatActivity {
                 //If game is over
                 timerTask.cancel(); // Stop timer
                 playerScore[currentPlayer-1]=seconds;
-                if(currentPlayer<2){
+
+                if(currentPlayer<noOfPlayer){
                     nextBtn.setVisibility(View.VISIBLE);
                 }
                 else if(currentPlayer == 2){
@@ -222,6 +226,9 @@ public class GameActivity extends AppCompatActivity {
                         openWinDialog(playerScore[0],playerScore[1]);
                     else
                         gameDrawDialog(playerScore[0],playerScore[1]);
+                }
+                else if(currentPlayer == 1){
+                    gameSingleDialog(playerScore[0]);
                 }
 
                 Toast.makeText(this,R.string.gameover,Toast.LENGTH_LONG).show();
@@ -392,6 +399,37 @@ public class GameActivity extends AppCompatActivity {
         player1TimeTxt.setText("Player 1 : " + player1TimeFormatted);
         player2TimeTxt = (TextView)vi.findViewById(R.id.dialog_txtView3);
         player2TimeTxt.setText("Player 2 : " + player2TimeFormatted);
+
+        dialog.setContentView(vi);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        Button btnOk = dialog.findViewById(R.id.dialog_btnOK);
+
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+
+        dialog.show();
+    }
+
+    public void gameSingleDialog(int player1Seconds) {
+
+        String player1TimeFormatted = formatTime(player1Seconds);
+
+        LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View vi = inflater.inflate(R.layout.game_draw_layout_dialog, null);
+
+        player1TimeTxt = (TextView)vi.findViewById(R.id.dialog_txtView2);
+        player1TimeTxt.setText("Player 1 : " + player1TimeFormatted);
+        player2TimeTxt = (TextView)vi.findViewById(R.id.dialog_txtView3);
+        player2TimeTxt.setVisibility(View.GONE);
+
+        TextView header = (TextView)vi.findViewById(R.id.dialog_txtView1);
+        header.setText("Well Done");
 
         dialog.setContentView(vi);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
