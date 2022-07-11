@@ -41,6 +41,7 @@ public class ImageAdaptor extends ArrayAdapter<Object> {
     }
 
     public void UpdateFiles(File[] files){
+
         this.files = files;
     }
 

@@ -326,6 +326,7 @@ public class MainActivity extends AppCompatActivity {
                                 return;
                             }
                             UpdateGridViewImages();
+                            titleView.setText(R.string.mainTitleAfter);
                         }
                     });
                 }
@@ -378,7 +379,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             fullyDownloaded = true;
-            titleView.setText(R.string.mainTitleAfter);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
