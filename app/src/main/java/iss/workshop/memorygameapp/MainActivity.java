@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     boolean isDownloading;
     ImageAdaptor adaptor;
     MainActivity THIS;
+    ArrayList<String> selectedItems = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         THIS = this;
 
         urlInput = findViewById(R.id.urlInput);
-//        urlInput.setText("https://stocksnap.io"); // set default value to save typing
+        urlInput.setText("https://stocksnap.io"); // set default value to save typing
         urlInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
                     else if (THIS.selectedItems.size() < 6) {
                         setImageViewAlpha(view);
                         THIS.selectedItems.add(selectedFile);
+                        Toast.makeText(THIS,"You have chosen " + THIS.selectedItems.size() +" images!",Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(THIS,"Select Six Only!",Toast.LENGTH_SHORT).show();
                     }
@@ -147,8 +149,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
-    ArrayList<String> selectedItems = new ArrayList<String>();
 
     private void showProgress(boolean show){
         if (show){
