@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         THIS = this;
 
         urlInput = findViewById(R.id.urlInput);
-        urlInput.setText("https://stocksnap.io"); // set default value to save typing
+//        urlInput.setText("https://stocksnap.io"); // set default value to save typing
         urlInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,19 +103,22 @@ public class MainActivity extends AppCompatActivity {
                 //https://stocksnap.io
             }
         });
-
+        
         proceed = findViewById(R.id.proceedBtn);
         proceed.setVisibility(View.GONE);
         proceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // this portion is from 1st part 
                 Intent i = new Intent(THIS, GameActivity.class);
                 i.putExtra("selectedImages",THIS.selectedItems);
                 startActivity(i);
             }
         });
-
-        //deleteAllDownloads();
+        
+        deleteAllDownloads();
+        // end of portion from 1st part 
+        
 
         // this portion is from 2nd part
         btnNext = findViewById(R.id.buttonNext);
@@ -131,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
         moveToNextIntent();
         // end of portion from 2nd part
        
+        
         File[] files = getExternalFilesDir(Environment.DIRECTORY_PICTURES).listFiles();
         adaptor = new ImageAdaptor(this,files);
         gridView = findViewById(R.id.imageGrid);
@@ -151,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                         setImageViewAlpha(view);
                         THIS.selectedItems.add(selectedFile);
                     } else {
-                        Toast.makeText(THIS,"SIX ONLY, BITCH",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(THIS,"Select Six Only!",Toast.LENGTH_SHORT).show();
                     }
 
                     if (THIS.selectedItems.size() == 6){
