@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         THIS = this;
 
         urlInput = findViewById(R.id.urlInput);
-        urlInput.setText("https://stocksnap.io"); // set default value to save typing
+        urlInput.setText("https://www.google.com/search?q=flower&tbm=isch"); // set default value to save typing
         urlInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
