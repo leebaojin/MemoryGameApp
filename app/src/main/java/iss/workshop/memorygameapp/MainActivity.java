@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         getNoOfPlayer(); // Get number of players
 
         urlInput = findViewById(R.id.urlInput);
-        urlInput.setText("https://www.google.com/search?q=flower&tbm=isch"); // set default value to save typing
+//        urlInput.setText("https://www.google.com/search?q=flower&tbm=isch"); // set default value to save typing
         urlInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
